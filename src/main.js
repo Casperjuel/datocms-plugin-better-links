@@ -1,8 +1,13 @@
-import Vue from 'vue';
-import App from './App.vue';
+import Vue from 'vue'
+import DatoCmsPlugin from 'datocms-plugins-sdk'
+import BetterLinks from './components/BetterLinks'
 
-Vue.config.productionTip = false;
+Vue.config.productionTip = false
 
-new Vue({
-  render: h => h(App),
-}).$mount('#app');
+DatoCmsPlugin.init((plugin) => {
+  plugin.startAutoResizer()
+
+  new Vue({
+    render: h => h(BetterLinks, { props: { plugin } }),
+  }).$mount('#app')
+})
