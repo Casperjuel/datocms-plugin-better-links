@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import DatoCmsPlugin from 'datocms-plugins-sdk'
+import './scss/main.scss'
 import BetterLinks from './components/BetterLinks'
 
 Vue.config.productionTip = false
