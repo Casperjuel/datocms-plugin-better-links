@@ -1,70 +1,80 @@
 <template>
   <div id="app"
-    class="BetterLinks text-grey-darker"
-    @mouseleave="hideSearchResults"
-    @blur="hideSearchResults"
-    @keydown.down="downRecord"
-    @keydown.up="upRecord"
-    @keyup.enter="setSelectedRecord(highlightedRecord)"
+    class="BetterLinks"
   >
     <div
-      class="flex justify-between border border-grey-light p-1 pr-2 pl-2 w-full"
+      @mouseleave="hideSearchResults"
+      @blur="hideSearchResults"
+      @keydown.down="downRecord"
+      @keydown.up="upRecord"
+      @keyup.enter="setSelectedRecord(highlightedRecord)"
+      class="w-full"
     >
-      <input
-        v-model="searchValue"
-        @click="showSearchResults"
-        @keydown="() => {
-          clearSelectedRecord()
-          showSearchResults()
-        }"
-        type="text"
-        class="outline-none flex-grow"
+      <div
+        class="flex justify-between border border-grey-light p-1 pr-2 pl-2"
       >
-      <div class="p-1 cursor-pointer">
-        <div
-          v-if="searchResultsVisible"
-          @click="hideSearchResults"
-          class="arrow-up"
-          />
-        <div
-          v-else
+        <input
+          v-model="searchValue"
           @click="showSearchResults"
-          class="arrow-down"
-        />
+          @keydown="() => {
+            clearSelectedRecord()
+            showSearchResults()
+          }"
+          type="text"
+          class="outline-none flex-grow"
+        >
+        <div class="p-1 cursor-pointer">
+          <div
+            v-if="searchResultsVisible"
+            @click="hideSearchResults"
+            class="arrow-up"
+            />
+          <div
+            v-else
+            @click="showSearchResults"
+            class="arrow-down"
+          />
+        </div>
+      </div>
+
+      <div v-if="searchResultsVisible" class="BetterLinks__list">
+        <RecycleScroller
+          v-if="hasSearchResults"
+          :items="searchResults"
+          :item-height="32"
+          :buffer="0"
+          class="border-b max-h-32 overflow-y-auto"
+          ref='scroller'
+        >
+          <template slot-scope="{ item, index }">
+            <div
+              :key="item.id"
+              @click="setSelectedRecord(item)"
+              @mouseenter="setHighlightedRecord(item)"
+              :id="`bl-item-${index}`"
+              :class="{
+                BetterLinks__list__item: true,
+                selected: (
+                  (selectedRecord && item.id === selectedRecord.id)
+                  || highlightedRecord && (
+                    item.id === highlightedRecord.id
+                  )
+                )
+              }"
+            >{{ item.display }}</div>
+          </template>
+        </RecycleScroller>
+
+        <div v-else class="border-b p-2 text-grey-dark">
+          No results found
+        </div>
       </div>
     </div>
 
-    <div v-if="searchResultsVisible" class="BetterLinks__list">
-      <RecycleScroller
-        v-if="hasSearchResults"
-        :items="searchResults"
-        :item-height="32"
-        :buffer="0"
-        class="border-b max-h-32 overflow-y-auto"
-        ref='scroller'
-      >
-        <template slot-scope="{ item, index }">
-          <div
-            :key="item.id"
-            @click="setSelectedRecord(item)"
-            @mouseenter="setHighlightedRecord(item)"
-            :id="`bl-item-${index}`"
-            :class="{
-              BetterLinks__list__item: true,
-              selected: (
-                (selectedRecord && item.id === selectedRecord.id)
-                || highlightedRecord && (
-                  item.id === highlightedRecord.id
-                )
-              )
-            }"
-          >{{ item.display }}</div>
-        </template>
-      </RecycleScroller>
-
-      <div v-else class="border-b p-2 text-grey-dark">
-        No results found
-      </div>
+    <div class="BetterLinks__action">
+      <a href="#" class="">
+        Create New Teachers
+      </a>
     </div>
   </div>
 </template>
@@ -181,6 +191,8 @@ export default {
 
 <style lang="scss">
 .BetterLinks {
+  @apply text-grey-darker flex;
+
   &__list {
     @apply border border-grey-light border-t-0 border-b-0;
 
@@ -192,6 +204,15 @@ export default {
       &:hover {
         background-color: var(--light-color);
       }
+    }
+  }
+
+  &__action {
+    @apply mt-2;
+
+    a {
+      @apply whitespace-no-wrap ml-5 uppercase text-xs no-underline font-bold;
+      color: var(--accent-color);
     }
   }
 }
