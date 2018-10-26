@@ -4,16 +4,17 @@
   "private": true,
   "scripts": {
     "serve": "cross-env NODE_ENV=development vue-cli-service serve",
-    "build": "cross-env NODE_ENV=production vue-cli-service build",
+    "build": "cross-env NODE_ENV=production vue-cli-service build --modern",
     "lint": "run-p lint:js lint:css",
     "lint:css": "stylelint '**/*.{vue,scss,css}'",
     "lint:js": "vue-cli-service lint --no-fix",
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
-    "datocms-plugins-sdk": "0.0.6",
+    "datocms-plugins-sdk": "0.0.7",
     "lodash-es": "^4.17.11",
-    "vue": "^2.5.17"
+    "vue": "^2.5.17",
+    "vue-virtual-scroller": "^1.0.0-beta.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.5",
@@ -40,6 +41,7 @@
     "stylelint-config-recommended": "^2.1.0",
     "stylelint-webpack-plugin": "^0.10.5",
     "tailwindcss": "^0.6.6",
+    "vue-cli-plugin-optimize": "0.0.3",
     "vue-template-compiler": "^2.5.17"
   },
   "gitHooks": {

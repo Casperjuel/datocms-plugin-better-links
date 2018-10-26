@@ -3,8 +3,8 @@
     class="BetterLinks text-grey-darker"
     @mouseleave="hideSearchResults"
     @blur="hideSearchResults"
-    @keyup.down="downRecord"
-    @keyup.up="upRecord"
+    @keydown.down="downRecord"
+    @keydown.up="upRecord"
     @keyup.enter="setSelectedRecord(highlightedRecord)"
   >
     <div
@@ -35,25 +35,32 @@
     </div>
 
     <div v-if="searchResultsVisible" class="BetterLinks__list">
-      <ul
-        class="border-b max-h-32 overflow-auto"
+      <RecycleScroller
         v-if="hasSearchResults"
+        :items="searchResults"
+        :item-height="32"
+        :buffer="0"
+        class="border-b max-h-32 overflow-y-auto"
+        ref='scroller'
       >
-        <li
-          v-for="record in searchResults"
-          :key="record.id"
-          @click="setSelectedRecord(record)"
-          :class="{
-            BetterLinks__list__item: true,
-            selected: (
-              record.value === selectedRecord
-              || highlightedRecord && (
-                record.value === highlightedRecord.value
+        <template slot-scope="{ item, index }">
+          <div
+            :key="item.id"
+            @click="setSelectedRecord(item)"
+            @mouseenter="setHighlightedRecord(item)"
+            :id="`bl-item-${index}`"
+            :class="{
+              BetterLinks__list__item: true,
+              selected: (
+                (selectedRecord && item.id === selectedRecord.id)
+                || highlightedRecord && (
+                  item.id === highlightedRecord.id
+                )
               )
-            )
-          }"
-        >{{ record.display }}</li>
-      </ul>
+            }"
+          >{{ item.display }}</div>
+        </template>
+      </RecycleScroller>
 
       <div v-else class="border-b p-2 text-grey-dark">
         No results found
@@ -63,6 +70,8 @@
 </template>
 
 <script>
+import { RecycleScroller } from 'vue-virtual-scroller'
+
 const records = [...Array(100)].map((_, id) => ({
   id, index: id, value: `record_${id}`, display: `Record ${id}`,
 }))
@@ -70,6 +79,10 @@ const records = [...Array(100)].map((_, id) => ({
 export default {
   props: {
     plugin: Object,
+  },
+
+  components: {
+    RecycleScroller,
   },
 
   data() {
@@ -89,6 +102,7 @@ export default {
 
     hideSearchResults() {
       this.searchResultsVisible = false
+      this.highlightedRecord = null
     },
 
     setSelectedRecord(record) {
@@ -108,11 +122,25 @@ export default {
     nextRecord(type) {
       const { highlightedRecord, searchResults } = this
 
-      let index = highlightedRecord ? highlightedRecord.index : -1
+      let index = highlightedRecord
+        ? searchResults.findIndex(record => record.id === highlightedRecord.id)
+        : -1
 
       index = type === 'down' ? index + 1 : index - 1
 
+      if (index === searchResults.length) return
+
       this.setHighlightedRecord(searchResults[index])
+
+      const { scroller } = this.$refs
+
+      if (!scroller) return
+
+      const target = document.getElementById(`bl-item-${index}`)
+
+      if (target) return
+
+      this.$refs.scroller.$el.scrollTop += (type === 'down' ? 32 : -32)
     },
 
     downRecord() { this.nextRecord('down') },
