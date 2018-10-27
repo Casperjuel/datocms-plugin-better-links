@@ -5,14 +5,6 @@ const StyleLintPlugin = require('stylelint-webpack-plugin')
 module.exports = {
   productionSourceMap: false,
 
-  css: {
-    loaderOptions: {
-      sass: {
-        data: fs.readFileSync('src/scss/variables.scss', 'utf-8'),
-      },
-    },
-  },
-
   configureWebpack: {
     plugins: [
       new StyleLintPlugin(),

@@ -40,5 +40,7 @@ module.exports = {
       ts: 'never',
       tsx: 'never',
     }],
+
+    'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
   },
 }

@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "datocms-plugins-sdk": "0.0.7",
+    "graphql-request": "^1.8.2",
     "lodash-es": "^4.17.11",
     "vue": "^2.5.17",
     "vue-virtual-scroller": "^1.0.0-beta.2"

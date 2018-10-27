@@ -1,6 +1,8 @@
 @import './minireset';
 @import './tailwind';
 
+$datocms-spacing: 10px 20px 0 10px;
+
 #app {
   padding: $datocms-spacing;
 }
