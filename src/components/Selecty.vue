@@ -16,6 +16,7 @@
           clearSelectedItem()
           showSearchResults()
         }"
+        :placeholder="placeholder"
         type="text"
         class="Selecty__input" />
 
@@ -34,10 +35,11 @@
       <DynamicScroller
         v-if="hasSearchResults"
         :items="searchResults"
-        :min-item-height="32"
-        :item-height="32"
+        :min-item-height="itemHeight"
+        :item-height="itemHeight"
         :buffer="0"
         class="Selecty__scroller"
+        :style="{ maxHeight: `${scrollerMaxHeight}px` }"
         ref='scroller'
       >
         <template slot-scope="{ item, index, active }">
@@ -48,15 +50,17 @@
             :data-index="index"
           >
             <div
+              ref="input"
               :key="item.id"
               @click="setSelectedItem(item)"
               @mouseenter="setHighlightedItem(item)"
               :id="`bl-item-${index}`"
+              :style="{ height: `${item.height || itemHeight}px` }"
               :class="{
               Selecty__list__item: true,
               selected: (
                 (selectedItem && item.id === selectedItem.id)
-                || highlightedItem && (item.id === highlightedItem.id)
+                || (highlightedItem && (item.id === highlightedItem.id))
               )}"
             >
               <slot name="item" :data="item">
@@ -67,8 +71,14 @@
         </template>
       </DynamicScroller>
 
+      <slot v-else-if="loading" name="loading">
+        <div class="Selecty__message Selecty__message--loading">
+          Loading...
+        </div>
+      </slot>
+
       <slot v-else name="noResults">
-        <div class="Selecty__no-results">
+        <div class="Selecty__message Selecty__message--no-results">
           No results found
         </div>
       </slot>
@@ -78,12 +88,17 @@
 
 <script>
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+import { debounce } from 'lodash-es'
 
 export default {
   name: 'Selecty',
 
   props: {
     items: Array,
+    placeholder: String,
+    itemHeight: Number,
+    scrollerMaxHeight: Number,
+    loading: Boolean,
   },
 
   components: {
@@ -98,6 +113,16 @@ export default {
       selectedItem: null,
       highlightedItem: null,
     }
+  },
+
+  watch: {
+    selectedItem(item) {
+      this.$emit('input', item ? item.value : item)
+    },
+
+    searchValue: debounce(function (value) {
+      this.$emit('update:searchValue', value)
+    }, 200),
   },
 
   methods: {
@@ -120,6 +145,8 @@ export default {
     },
 
     setSelectedItem(item) {
+      if (!item) return
+
       this.searchValue = item.display
       this.selectedItem = item
       this.hideSearchResults()
@@ -154,7 +181,7 @@ export default {
 
       if (target) return
 
-      this.$refs.scroller.$el.scrollTop += (type === 'down' ? 32 : -32)
+      scroller.$el.scrollTop += (type === 'down' ? this.itemHeight : -this.itemHeight)
     },
 
     downItem() { this.nextItem('down') },
@@ -206,10 +233,10 @@ export default {
   }
 
   &__scroller {
-    @apply border-b max-h-32 overflow-y-auto;
+    @apply border-b overflow-y-auto;
   }
 
-  &__no-results {
+  &__message {
     @apply border-b p-2 text-grey-dark;
   }
 
@@ -221,9 +248,9 @@ export default {
     @apply border border-grey-light border-t-0 border-b-0;
 
     &__item {
-      @apply p-2 border-grey-light border-t cursor-pointer;
+      @apply flex items-center pl-2 border-grey-light border-t cursor-pointer;
 
-      &:first-child { @apply border-t-0 }
+      &:first-child { @apply border-t-0; }
 
       &:hover {
         background-color: var(--light-color);

@@ -33,6 +33,8 @@ module.exports = {
       'x-invalid-end-tag': false,
     }],
 
+    'func-names': 0,
+
     'import/extensions': ['error', 'always', {
       vue: 'never',
       js: 'never',
@@ -40,7 +42,5 @@ module.exports = {
       ts: 'never',
       tsx: 'never',
     }],
-
-    'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
   },
 }

@@ -2,7 +2,15 @@
   <div id="app"
     class="BetterLinks"
   >
-    <Selecty :items="items" />
+    <Selecty
+      :items="items"
+      :item-height="34"
+      :scroller-max-height="34 * 4"
+      v-model="selected"
+      :searchValue.sync="searchValue"
+      :loading="loading"
+      placeholder="Select..."
+    />
 
     <div @click.prevent="triggerAction" class="BetterLinks__action">
       <a href="#" class="flex items-center">
@@ -18,11 +26,8 @@
 
 <script>
 /* eslint-disable camelcase */
+import { camelCase, startCase, pick } from 'lodash-es'
 import Selecty from './Selecty'
-
-const items = [...Array(100)].map((_, id) => ({
-  id, index: id, value: `item_${id}`, display: `Item ${id}`,
-}))
 
 export default {
   props: {
@@ -34,13 +39,18 @@ export default {
   },
 
   data() {
-    const { field: { attributes: { label, api_key, validators } } } = this.plugin
+    const { field: { attributes: { label, api_key, validators } }, parameters } = this.plugin
+    const { instance: { fields } } = parameters
 
     return {
-      items,
+      items: [],
+      selected: null,
+      loading: false,
       fieldName: label,
       fieldLinkId: validators.item_item_type.item_types[0],
       fieldApiKey: api_key,
+      searchValue: '',
+      searchFields: fields.split(',').map(field => field.trim()),
     }
   },
 
@@ -48,6 +58,66 @@ export default {
     triggerAction() {
       this.plugin.createNewItem(this.fieldLinkId)
     },
+
+    async searchItems(search) {
+      let searchQuery = ''
+      const { fieldName, searchFields } = this
+      const linkedName = `${startCase(camelCase(fieldName))}s`
+      const fields = searchFields.map(field => camelCase(field))
+      const queryField = `all${linkedName}`
+
+      const searchPattern = field => `{
+        ${field}: {
+          matches: {
+            pattern: "${search}"
+          }
+        }
+      }`
+
+      if (search !== '') {
+        searchQuery = `OR: [${fields.map(field => searchPattern(field))}]`
+      }
+
+      const query = `query All${linkedName}{
+        ${queryField}(${searchQuery}) {
+          id
+          ${fields.join('\n')}
+        }
+      }`
+
+      const response = await this.$graphql.request(query)
+
+      return response[queryField]
+        .map(({ id, ...field }) => ({
+          id,
+          value: id,
+          display: Object.values(pick(field, fields)).join(' '),
+        }))
+    },
+  },
+
+  watch: {
+    selected(value) {
+      const { plugin } = this
+
+      plugin.setFieldValue(plugin.fieldPath, value)
+    },
+  },
+
+  async mounted() {
+    const { plugin, searchItems, searchValue } = this
+
+    this.unsubscribe = plugin.addFieldChangeListener(plugin.fieldPath, () => {
+      this.selected = plugin.getFieldValue(plugin.fieldPath)
+    })
+
+    this.loading = true
+    this.items = await searchItems(searchValue)
+    this.loading = false
+  },
+
+  beforeDestroy() {
+    if (this.unsubscribe) this.unsubscribe()
   },
 }
 </script>
@@ -77,16 +147,18 @@ export default {
   }
 
   &__action {
-    padding: 5px;
-    margin-left: 15px;
-
-    &:hover {
-      @apply bg-grey-lighter rounded;
-    }
+    margin-left: 12px;
+    margin-top: 1px;
 
     a {
+      padding: 5px;
+      padding-right: 8px;
       @apply whitespace-no-wrap uppercase text-xs no-underline font-bold;
       color: var(--accent-color);
+
+      &:hover {
+        @apply bg-grey-lighter rounded;
+      }
     }
   }
 }
