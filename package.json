@@ -1,7 +1,6 @@
 {
   "name": "datocms-plugin-better-links",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.0.1",
   "scripts": {
     "serve": "cross-env NODE_ENV=development vue-cli-service serve --out-dir",
     "build": "cross-env NODE_ENV=production vue-cli-service build --modern",
@@ -9,6 +8,40 @@
     "lint:css": "stylelint '**/*.{vue,scss,css}'",
     "lint:js": "vue-cli-service lint --no-fix",
     "test:unit": "vue-cli-service test:unit"
+  },
+  "datoCmsPlugin": {
+    "title": "Better Links",
+    "entryPoint": "dist/index.html",
+    "fieldTypes": [
+      "link",
+      "links"
+    ],
+    "pluginType": "field_editor",
+    "parameters": {
+      "global": [
+        {
+          "id": "developmentMode",
+          "label": "Development mode?",
+          "type": "boolean",
+          "hint": "Enable development logs on the console"
+        },
+        {
+          "id": "apiToken",
+          "label": "API token",
+          "type": "string",
+          "hint": "Please provide a READ-ONLY API token, so that we can get the Links field values."
+        }
+      ],
+      "instance": [
+        {
+          "id": "fields",
+          "label": "Fields to show",
+          "hint": "i.e. first_name,last_name",
+          "type": "string",
+          "required": true
+        }
+      ]
+    }
   },
   "dependencies": {
     "datocms-plugins-sdk": "0.0.7",

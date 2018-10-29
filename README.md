@@ -1,31 +1,11 @@
-# datocms-plugin-better-links
+# Better Links - DatoCMS Plugin.
 
-## Project setup
-```
-npm install
-```
+A plugin that presents integer fields as star rating widgets.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Installation
 
-### Compiles and minifies for production
-```
-npm run build
-```
+1. Head over the *Settings > Plugins* section of your DatoCMS project
+2. Search for the "datocms-plugin-better-links" plugin
+3. Click install
 
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Run your unit tests
-```
-npm run test:unit
-```
+For more detailed info, head over to the [DatoCMS documentation page](https://www.datocms.com/docs/plugins/install/).
