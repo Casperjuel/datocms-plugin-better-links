@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "cross-env NODE_ENV=development vue-cli-service serve",
+    "serve": "cross-env NODE_ENV=development vue-cli-service serve --out-dir",
     "build": "cross-env NODE_ENV=production vue-cli-service build --modern",
     "lint": "run-p lint:js lint:css",
     "lint:css": "stylelint '**/*.{vue,scss,css}'",

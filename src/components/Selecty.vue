@@ -88,12 +88,13 @@
 
 <script>
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
-import { debounce } from 'lodash-es'
+import { debounce, pull } from 'lodash-es'
 
 export default {
   name: 'Selecty',
 
   props: {
+    value: [String, Number],
     items: Array,
     placeholder: String,
     itemHeight: Number,
@@ -116,6 +117,10 @@ export default {
   },
 
   watch: {
+    items(newItems, oldItems) {
+      if (newItems !== oldItems) this.setSelectedItem()
+    },
+
     selectedItem(item) {
       this.$emit('input', item ? item.value : item)
     },
@@ -144,12 +149,14 @@ export default {
       }
     },
 
-    setSelectedItem(item) {
-      if (!item) return
-
-      this.searchValue = item.display
-      this.selectedItem = item
-      this.hideSearchResults()
+    setSelectedItem(selectedItem) {
+      if (selectedItem) {
+        this.searchValue = selectedItem.display
+        this.selectedItem = selectedItem
+        this.hideSearchResults()
+      } else if (this.value) {
+        this.setSelectedItem(this.items.find(item => item.value === this.value))
+      }
     },
 
     setHighlightedItem(item) {
@@ -195,11 +202,16 @@ export default {
 
       if (searchValue === '') return this.items
 
+      if (this.hasSelectedItem) {
+        const { selectedItem } = this
+        const items = pull([...this.items], selectedItem)
+        items.unshift(selectedItem)
+        return items
+      }
+
       return this.items.filter((item) => {
         const value = item.value.toLowerCase()
         const display = item.display.toLowerCase()
-
-        if (this.hasSelectedItem) return value === this.selectedItem.value.toLowerCase()
 
         return value.includes(searchValue) || display.includes(searchValue)
       })
@@ -216,6 +228,10 @@ export default {
     hasSelectedItem() {
       return this.selectedItem !== null
     },
+  },
+
+  mounted() {
+    this.setSelectedItem()
   },
 }
 </script>

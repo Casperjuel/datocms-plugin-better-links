@@ -107,6 +107,8 @@ export default {
   async mounted() {
     const { plugin, searchItems, searchValue } = this
 
+    this.selected = plugin.getFieldValue(plugin.fieldPath)
+
     this.unsubscribe = plugin.addFieldChangeListener(plugin.fieldPath, () => {
       this.selected = plugin.getFieldValue(plugin.fieldPath)
     })
