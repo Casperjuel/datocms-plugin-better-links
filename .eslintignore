@@ -7,6 +7,8 @@ localhost.crt
 localhost.key
 /tags*
 /dist
+*test.js
+*.test.js
 
 # allow these files/folders
 !.gitignore

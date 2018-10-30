@@ -27,7 +27,7 @@
 <script>
 /* eslint-disable camelcase */
 import { camelCase, startCase, pick } from 'lodash-es'
-import Selecty from './Selecty'
+import Selecty from '~/components/Selecty'
 
 export default {
   props: {
@@ -87,12 +87,11 @@ export default {
 
       const response = await this.$graphql.request(query)
 
-      return response[queryField]
-        .map(({ id, ...field }) => ({
-          id,
-          value: id,
-          display: Object.values(pick(field, fields)).join(' '),
-        }))
+      return response[queryField].map(({ id, ...field }) => ({
+        id,
+        value: id,
+        display: Object.values(pick(field, fields)).join(' '),
+      }))
     },
   },
 

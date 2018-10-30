@@ -1,6 +1,6 @@
 {
   "extends": "stylelint-config-recommended",
-  "ignoreFiles": ["dist/**/*"],
+  "ignoreFiles": ["dist/**/*", "coverage/**/*"],
   "rules": {
     "string-quotes": "single",
     "declaration-block-trailing-semicolon": "always",
