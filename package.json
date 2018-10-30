@@ -1,6 +1,6 @@
 {
   "name": "datocms-plugin-better-links",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "scripts": {
     "serve": "cross-env NODE_ENV=development vue-cli-service serve --out-dir",
     "build": "cross-env NODE_ENV=production vue-cli-service build --modern",
