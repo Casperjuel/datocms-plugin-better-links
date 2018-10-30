@@ -39,14 +39,16 @@ export default {
   },
 
   data() {
-    const { field: { attributes: { label, api_key, validators } }, parameters } = this.plugin
+    const { field: { attributes: { api_key, validators } }, fieldPath, parameters } = this.plugin
     const { instance: { fields } } = parameters
+
+    console.log(this.plugin)
 
     return {
       items: [],
       selected: null,
       loading: false,
-      fieldName: label,
+      fieldName: fieldPath,
       fieldLinkId: validators.item_item_type.item_types[0],
       fieldApiKey: api_key,
       searchValue: '',

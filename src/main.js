@@ -6,8 +6,6 @@ import BetterLinks from '~/components/BetterLinks'
 
 Vue.config.productionTip = false
 
-Vue.prototype.$moo = 'cow'
-
 DatoCmsPlugin.init((plugin) => {
   plugin.startAutoResizer()
 

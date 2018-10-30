@@ -1,6 +1,6 @@
 # Better Links - DatoCMS Plugin.
 
-A plugin that presents integer fields as star rating widgets.
+A plugin that allows you see multiple fields when selecting a Links field type.
 
 ## Installation
 
