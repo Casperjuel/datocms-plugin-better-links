@@ -1,6 +1,6 @@
 {
   "name": "datocms-plugin-better-links",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "scripts": {
     "serve": "cross-env NODE_ENV=development vue-cli-service serve --out-dir",
     "build": "cross-env NODE_ENV=production vue-cli-service build --modern",
@@ -10,6 +10,7 @@
     "test:unit": "cross-env NODE_ENV=test vue-cli-service test:unit --no-cache --watchAll"
   },
   "homepage": "https://github.com/cj/datocms-plugin-better-links",
+   "description": "A plugin that allows you see multiple fields when selecting a Links field type.",
   "keywords": [
     "datocms",
     "datocms-plugin",
