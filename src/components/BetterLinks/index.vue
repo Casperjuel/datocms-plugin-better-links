@@ -49,7 +49,7 @@ export default {
       selected: null,
       loading: false,
       fieldName: fieldPath,
-      fieldLinkId: validators.item_item_type.item_types[0],
+      fieldLinkId: validators.item_item_type?.item_types[0],
       fieldApiKey: api_key,
       searchValue: '',
       searchFields: fields.split(',').map(field => field.trim()),
@@ -65,7 +65,7 @@ export default {
       let searchQuery = ''
       const { fieldName, searchFields } = this
       const linkedName = `${startCase(camelCase(fieldName))}s`
-      const fields = searchFields.map(field => camelCase(field))
+      const fields = searchFields?.map(field => camelCase(field))
       const queryField = `all${linkedName}`
 
       const searchPattern = field => `{
